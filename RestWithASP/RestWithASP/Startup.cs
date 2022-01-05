@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using RestWithASP.Business;
 using RestWithASP.Business.Implementations;
 using RestWithASP.Data.Converter.Contract;
@@ -42,6 +43,16 @@ namespace RestWithASP
             {
                 MigrateDatabase(connection);
             }
+            //Configuration others formatters
+           
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json",MediaTypeHeaderValue.Parse("application/json"));
+            })
+            //support application/xml
+            .AddXmlDataContractSerializerFormatters();
+   
             //API Versioning
             services.AddApiVersioning();
             //Dependency Injection
