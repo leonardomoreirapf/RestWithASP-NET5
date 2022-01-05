@@ -1,6 +1,9 @@
-﻿using RestWithASP.Model;
+﻿using RestWithASP.Data.Converter.Contract;
+using RestWithASP.Data.VO;
+using RestWithASP.Model;
 using RestWithASP.Model.Context;
 using RestWithASP.Repository;
+using RestWithASP.Repository.Generic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +14,19 @@ namespace RestWithASP.Business.Implementations
 {
     public class PersonBusiness : IPersonBusiness
     {
-        private readonly IPersonRepository _repository;
-        public PersonBusiness(IPersonRepository repository)
+        private readonly IRepository<Person> _repository;
+        private readonly IPersonConverter _converter;
+        public PersonBusiness(IRepository<Person> repository, IPersonConverter converter)
         {
             _repository = repository;
+            _converter = converter;
         }
-        public Person Create(Person person)
+        public PersonVO Create(PersonVO person)
         {
-            return _repository.Create(person);
+            var personEntity = _converter.Parse(person);
+            var result = _repository.Create(personEntity);
+            var response = _converter.Parse(result);
+            return response;
         }
 
         public void Delete(long id)
@@ -27,20 +35,26 @@ namespace RestWithASP.Business.Implementations
 
         }
 
-        public IEnumerable<Person> FindAll()
+        public IEnumerable<PersonVO> FindAll()
         {
-    
-            return _repository.FindAll();
+            var result = _repository.FindAll();
+            var response = _converter.Parse(result);
+            return response;
         }
 
-        public Person FindById(long id)
+        public PersonVO FindById(long id)
         {
-            return _repository.FindById(id);
+            var result = _repository.FindById(id);
+            var response = _converter.Parse(result);
+            return response;
         }
 
-        public Person Update(Person person)
+        public PersonVO Update(PersonVO person)
         {
-            return _repository.Update(person);
+            var personEntity = _converter.Parse(person);
+            var result = _repository.Update(personEntity);
+            var response = _converter.Parse(result);
+            return response;
         }
     }
 }

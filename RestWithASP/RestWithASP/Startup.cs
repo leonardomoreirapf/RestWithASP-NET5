@@ -6,9 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RestWithASP.Business;
 using RestWithASP.Business.Implementations;
+using RestWithASP.Data.Converter.Contract;
+using RestWithASP.Data.Converter.Implementations;
 using RestWithASP.Model.Context;
-using RestWithASP.Repository;
-using RestWithASP.Repository.Implementations;
+using RestWithASP.Repository.Generic;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -46,8 +47,11 @@ namespace RestWithASP
             //Dependency Injection
             services.AddScoped<IPersonBusiness, PersonBusiness>();
             services.AddScoped<IBookBusiness, BookBusiness>();
-            services.AddScoped<IPersonRepository, PersonRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IPersonConverter, PersonConverter>();
+            services.AddScoped<IBookConverter, BookConverter>();
+
+            //Dependency Injection Generic Repository
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         }
 
 
