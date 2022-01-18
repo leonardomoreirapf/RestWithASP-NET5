@@ -9,6 +9,8 @@ using RestWithASP.Business;
 using RestWithASP.Business.Implementations;
 using RestWithASP.Data.Converter.Contract;
 using RestWithASP.Data.Converter.Implementations;
+using RestWithASP.Hypermedia.Enricher;
+using RestWithASP.Hypermedia.Filters;
 using RestWithASP.Model.Context;
 using RestWithASP.Repository.Generic;
 using Serilog;
@@ -52,6 +54,13 @@ namespace RestWithASP
             })
             //support application/xml
             .AddXmlDataContractSerializerFormatters();
+
+            //Adding HateOAS
+            var filterOptions = new HyperMediaFilterOptions();
+            filterOptions.ContentResponseEnricherList.Add(new PersonEnricher());
+            filterOptions.ContentResponseEnricherList.Add(new BookEnricher());
+
+            services.AddSingleton(filterOptions);
    
             //API Versioning
             services.AddApiVersioning();
@@ -83,6 +92,7 @@ namespace RestWithASP
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
             });
         }
 
